@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Foggy blue-purple glow from your images */
+body {
+  background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(173,216,230,0.7), rgba(200,162,200,0.5));
+  color: #1a1a1a;
+}
+
+.card { /* Example card style for inventions */
+  background: rgba(255,255,255,0.8);
+  border: 2px solid #00e676;
+  border-radius: 1rem;
+  padding: 1rem;
+}
