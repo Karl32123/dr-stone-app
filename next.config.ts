@@ -1,8 +1,21 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
-  reactCompiler: true,
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'static.wikia.nocookie.net',
+      },
+      {
+        protocol: 'https',
+        hostname: 'upload.wikimedia.org',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.wikia.nocookie.net',
+      },
+    ],
+  },
 };
 
 export default nextConfig;
