@@ -16,8 +16,8 @@ export default function Invention({ params }: { params: { name: string } }) {
     setChat("");
   };
 
-  const scanImage = (e) => {
-    const file = e.target.files[0];
+  const scanImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       alert("Mecha-Senku detected: " + inv?.name + " with 99.9% accuracy! Science confirmed.");
     }
