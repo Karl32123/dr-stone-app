@@ -31,22 +31,22 @@ export default function Invention({ params }: { params: { name: string } }) {
       <img src={inv?.image} alt={inv?.name} className="rounded-xl mb-6 w-full" />
 
       {/* Canonical Mecha-Senku AI Chat */}
-      <div className="mecha-box bg-gray-900 p-6 rounded-2xl mb-8">
-        <img src="https://static.wikia.nocookie.net/dr-stone/images/4/4e/Mecha_Senku.png/revision/latest" alt="Mecha-Senku" className="w-32 h-32 rounded-full mr-6" />
-        <div className="flex-1">
-          <h3 className="text-green-400 text-2xl mb-3">Talk to Mecha-Senku (Real AI Chat)</h3>
-          <div className="h-64 overflow-y-auto mb-4 bg-black p-4 rounded-xl text-white">
-            {messages.map((m, i) => (
-              <p key={i} className={m.role === "mecha" ? "text-green-400" : ""}>{m.text}</p>
-            ))}
-          </div>
-          <div className="flex gap-2">
-            <input value={chat} onChange={(e) => setChat(e.target.value)} placeholder="Ask about physics, chemistry, alchemy..." className="flex-1 p-4 rounded-xl bg-gray-800 text-white" />
-            <button onClick={sendChat} className="bg-green-500 px-8 rounded-xl">Send</button>
-          </div>
-        </div>
-      </div>
-
+<div className="mecha-box bg-gray-900 p-6 rounded-2xl mb-8">
+  <iframe 
+    width="320" 
+    height="180" 
+    src="https://www.youtube.com/embed/1nzOBg0xPAA?autoplay=1&loop=1&playlist=1nzOBg0xPAA&mute=0" 
+    allow="autoplay" 
+    title="Mecha-Senku talking" 
+    frameborder="0" 
+    allowfullscreen
+  ></iframe>
+  <div className="flex-1 ml-6">
+    <h3 className="text-green-400 text-2xl mb-3">Mecha-Senku is Alive & Talking!</h3>
+    <p id="fact"></p>
+    <button onClick={newFact} className="bg-green-500 px-8 py-3 rounded-xl">New Fact (he speaks & moves)</button>
+  </div>
+</div>
       {/* Kaseki Hammer Animation */}
       <button onClick={buildWithKaseki} className="bg-orange-600 hover:bg-orange-700 text-white px-10 py-4 rounded-2xl text-xl font-bold flex items-center gap-3">
         {hammering ? "🔨 HAMMERING TRUTH..." : "Kaseki: Let's Hammer This Invention Free!"}
