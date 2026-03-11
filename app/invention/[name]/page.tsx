@@ -16,8 +16,8 @@ export default function Invention({ params }: { params: { name: string } }) {
     }, 1400);
   };
 
-  const scanImage = async (e) => {
-    const file = e.target.files[0];
+  const scanImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       const img = new Image();
       img.src = URL.createObjectURL(file);
