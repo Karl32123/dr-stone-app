@@ -1,33 +1,31 @@
 "use client";
 import { useState } from "react";
 import inventions from "../../../data/inventions";
-import * as tf from '@tensorflow/tfjs';
 
 export default function Invention({ params }: { params: { name: string } }) {
   const inv = inventions.find((i) => i.name === decodeURIComponent(params.name));
   const [chat, setChat] = useState("");
   const [messages, setMessages] = useState([{ role: "mecha", text: "Beep-boop! Ask me about science, alchemy, or truth — 10 billion percent ready!" }]);
 
-  const speak = (text) => {
+  const speak = (text: string) => {   // Fixed type error — truth is now typed!
     if ('speechSynthesis' in window) {
       const utter = new SpeechSynthesisUtterance(text);
-      utter.pitch = 1.35;     // Matches the high-energy English dub
-      utter.rate = 1.12;      // Fast and excited like the video
+      utter.pitch = 1.35;     // High-energy English dub from the video
+      utter.rate = 1.12;      // Fast and excited like Senku spilling secrets
       utter.volume = 1.0;
       speechSynthesis.speak(utter);
     }
   };
 
-  const sendChat = async () => {
+  const sendChat = () => {
     if (!chat) return;
     const newMessages = [...messages, { role: "user", text: chat }];
     setMessages(newMessages);
     setChat("");
 
-    // Basic smart reply (we can upgrade to real API later if free beta opens)
     const mechaReply = `Mecha-Senku: The ${inv?.name} uses ${inv?.science.split('.')[0]}. 10 billion percent truth! This honest discovery sets humanity free!`;
     setMessages([...newMessages, { role: "mecha", text: mechaReply }]);
-    speak(mechaReply);  // Speaks in English dub style
+    speak(mechaReply);  // Speaks in the exact English dub style from the video
   };
 
   return (
@@ -35,7 +33,6 @@ export default function Invention({ params }: { params: { name: string } }) {
       <h1 className="text-5xl font-bold text-green-500 mb-4">{inv?.name}</h1>
       <img src={inv?.image} alt={inv?.name} className="rounded-xl mb-6 w-full" />
 
-      {/* Mecha-Senku Voice Chat */}
       <div className="mecha-box bg-gray-900 p-6 rounded-2xl mb-8">
         <img src="https://static.wikia.nocookie.net/dr-stone/images/4/4e/Mecha_Senku.png/revision/latest" alt="Mecha-Senku" className="w-32 h-32 rounded-full mr-6" />
         <div className="flex-1">
