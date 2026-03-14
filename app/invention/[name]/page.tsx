@@ -25,7 +25,7 @@ export default function Invention({ params }: { params: { name: string } }) {
         await tf.ready();
         const model = await tf.loadLayersModel('https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v2/classification/4/default/1', { fromTFHub: true });
         const tensor = tf.browser.fromPixels(img).resizeNearestNeighbor([224,224]).toFloat().div(tf.scalar(255.0)).expandDims();
-        const predictions = await model.predict(tensor).data();
+        const predictions = await (model.predict(tensor) as tf.Tensor).data();
         const top = Array.from(predictions).sort((a, b) => b - a)[0];
         setScanResult("Mecha-Senku detected: " + inv?.name + " with 99.9% accuracy! Science confirmed.");
       };
