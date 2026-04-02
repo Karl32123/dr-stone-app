@@ -1,66 +1,106 @@
 "use client";
-import { useState } from "react";
-import inventions from "../../../data/inventions";
-import * as tf from '@tensorflow/tfjs';
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import inventions from "../../data/inventions";
+import * as tf from "@tensorflow/tfjs";
 
-export default function Invention({ params }: { params: { name: string } }) {
-  const inv = inventions.find((i) => i.name === decodeURIComponent(params.name));
-  const [hammering, setHammering] = useState(false);
+export default function InventionPage() {
+  const params = useParams();
+  const name = decodeURIComponent(params.name as string);
+  const inv = inventions.find((i) => i.name === name);
+
   const [scanResult, setScanResult] = useState("");
+  const [model, setModel] = useState<any>(null);
 
-  const buildWithKaseki = () => {
-    setHammering(true);
-    setTimeout(() => {
-      setHammering(false);
-      alert("KASEKI HAMMERED IT TRUE! Invention unlocked — truth sets you free! 🔥");
-    }, 1400);
-  };
-
-  const scanImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const img = new Image();
-      img.src = URL.createObjectURL(file);
-      img.onload = async () => {
-        await tf.ready();
-        const model = await tf.loadLayersModel('https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v2/classification/4/default/1', { fromTFHub: true });
-        const tensor = tf.browser.fromPixels(img).resizeNearestNeighbor([224,224]).toFloat().div(tf.scalar(255.0)).expandDims();
-        const predictions = await (model.predict(tensor) as tf.Tensor).data();
-        const top = Array.from(predictions).sort((a, b) => b - a)[0];
-        setScanResult("Mecha-Senku detected: " + inv?.name + " with 99.9% accuracy! Science confirmed.");
-      };
+  useEffect(() => {
+    async function loadModel() {
+      const loadedModel = await tf.loadLayersModel(
+        "https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v2/classification/4/default/1",
+        { fromTFHub: true }
+      );
+      setModel(loadedModel);
     }
+    loadModel();
+  }, []);
+
+  const handleScan = async (e: any) => {
+    const file = e.target.files[0];
+    if (!file || !model) return;
+
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+    img.onload = async () => {
+      const tensor = tf.browser.fromPixels(img)
+        .resizeNearestNeighbor([224, 224])
+        .toFloat()
+        .div(tf.scalar(255.0))
+        .expandDims();
+
+      const predictions = await (model.predict(tensor) as tf.Tensor).data();
+      const top = Array.from(predictions)
+        .map((prob, i) => ({ prob, i }))
+        .sort((a, b) => b.prob - a.prob)[0];
+
+      setScanResult(`Mecha-Senku detected: "${inv?.name}" with ${(top.prob * 100).toFixed(1)}% accuracy! Science confirmed.`);
+    };
   };
+
+  if (!inv) return <div className="p-8 text-white">Invention not found.</div>;
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-5xl font-bold text-green-500 mb-4">{inv?.name}</h1>
-      <img src={inv?.image} alt={inv?.name} className="rounded-xl mb-6 w-full" />
-
-      <div className="mecha-box bg-gray-900 p-6 rounded-2xl mb-8">
-        <img src="https://static.wikia.nocookie.net/dr-stone/images/4/4e/Mecha_Senku.png/revision/latest" alt="Mecha-Senku" className="w-32 h-32 rounded-full mr-6" />
-        <div>
-          <h3 className="text-green-400 text-2xl">Mecha-Senku Says:</h3>
-          <p className="text-lg">{inv?.facts ? inv.facts[0] : "Truth is being pursued..."}</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-100 p-8">
+      {/* CARD IMAGE - FIXED WITH PLAIN IMG TAG */}
+      <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <img
+          src={inv.image}
+          alt={inv.name}
+          className="w-full h-auto object-cover"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = "https://picsum.photos/id/1015/800/600"; // fallback
+          }}
+        />
       </div>
 
-      <h3 className="text-2xl mb-2">Blueprint Diagram</h3>
-      <img src={inv?.blueprint} className="rounded-xl my-4" />
+      <div className="max-w-2xl mx-auto mt-8 bg-white rounded-3xl shadow-xl p-8">
+        <h1 className="text-5xl font-bold text-center text-emerald-600">{inv.name}</h1>
 
-      <h3 className="text-2xl mb-2">Scientific Truth (Physics • Chemistry • Alchemy)</h3>
-      <p className="text-lg leading-relaxed">{inv?.science}</p>
+        <div className="mt-6">
+          <h2 className="text-2xl font-bold text-emerald-700">Mecha-Senku Says:</h2>
+          <p className="text-lg mt-2">Truth is being pursued...</p>
+        </div>
 
-      {/* Kaseki Hammer Animation */}
-      <button onClick={buildWithKaseki} className="bg-orange-600 hover:bg-orange-700 text-white px-10 py-4 rounded-2xl text-xl font-bold flex items-center gap-3 mt-8">
-        {hammering ? "🔨 HAMMERING TRUTH..." : "Kaseki: Let's Hammer This Invention Free!"}
-      </button>
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-emerald-700">Blueprint Diagram</h2>
+          {/* Blueprint placeholder - add your SVG later if wanted */}
+          <div className="h-64 bg-stone-100 rounded-2xl flex items-center justify-center text-stone-400 mt-4">
+            [Blueprint will go here]
+          </div>
+        </div>
 
-      {/* Real TensorFlow.js Scanning */}
-      <div className="p-6 bg-gray-900 rounded-2xl mt-8">
-        <h3 className="text-green-400 text-2xl mb-3">Scan Invention (TensorFlow.js)</h3>
-        <input type="file" accept="image/*" onChange={scanImage} className="block w-full p-4 bg-gray-800 rounded-xl text-white" />
-        <p className="text-sm mt-2">{scanResult || "Upload a photo — Mecha-Senku will detect and explain the science!"}</p>
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-emerald-700">Scientific Truth (Physics • Chemistry • Alchemy)</h2>
+          <div className="mt-4 prose text-lg leading-relaxed">
+            <p>{inv.science}</p>
+          </div>
+          <p className="mt-6 text-emerald-600 font-bold">{inv.real}</p>
+        </div>
+
+        <div className="mt-8 flex justify-center">
+          <button className="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xl rounded-2xl">
+            Kaseki: Let&apos;s Hammer This Invention Free!
+          </button>
+        </div>
+
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold text-emerald-700">Scan Invention (TensorFlow.js)</h2>
+          <div className="mt-4">
+            <label className="block bg-white border-2 border-dashed border-emerald-400 rounded-2xl p-8 text-center cursor-pointer hover:bg-emerald-50">
+              <input type="file" accept="image/*" onChange={handleScan} className="hidden" />
+              <span className="text-emerald-600 font-bold">Choose File</span>
+            </label>
+            {scanResult && <p className="mt-6 text-center font-bold text-emerald-600">{scanResult}</p>}
+          </div>
+        </div>
       </div>
     </div>
   );
