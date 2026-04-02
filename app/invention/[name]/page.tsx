@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import inventions from "../../data/inventions";
+import inventions from "../../../data/inventions";
 import * as tf from "@tensorflow/tfjs";
 
 export default function InventionPage() {
@@ -49,14 +49,14 @@ export default function InventionPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-100 p-8">
-      {/* CARD IMAGE - FIXED WITH PLAIN IMG TAG */}
+      {/* CARD IMAGE - PLAIN IMG TAG FOR 100% RELIABILITY */}
       <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
         <img
           src={inv.image}
           alt={inv.name}
           className="w-full h-auto object-cover"
           onError={(e) => {
-            (e.target as HTMLImageElement).src = "https://picsum.photos/id/1015/800/600"; // fallback
+            (e.target as HTMLImageElement).src = "https://picsum.photos/id/1015/800/600";
           }}
         />
       </div>
@@ -71,7 +71,6 @@ export default function InventionPage() {
 
         <div className="mt-8">
           <h2 className="text-2xl font-bold text-emerald-700">Blueprint Diagram</h2>
-          {/* Blueprint placeholder - add your SVG later if wanted */}
           <div className="h-64 bg-stone-100 rounded-2xl flex items-center justify-center text-stone-400 mt-4">
             [Blueprint will go here]
           </div>
