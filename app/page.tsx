@@ -103,8 +103,18 @@ export default function Home() {
 
   return (
     <div className="p-8 min-h-screen bg-stone-950 text-white">
-      <h1 className="text-5xl font-bold text-green-500 text-center mb-2">Dr. STONE Truth Roadmap</h1>
-      <p className="text-center mb-8 text-emerald-300">Pursue the Truth That Sets You Free — Stone to Stars, One Honest Discovery at a Time! 10 Billion Percent!</p>
+      {/* OFFICIAL DR. STONE LOGO HEADING - EXACTLY AS YOU PROVIDED */}
+      <div className="flex justify-center mb-6">
+        <img 
+          src="/images/dr-stone-logo.png" 
+          alt="Dr. STONE" 
+          className="w-full max-w-4xl drop-shadow-2xl"
+        />
+      </div>
+
+      <p className="text-center mb-8 text-emerald-300 text-xl">
+        Pursue the Truth That Sets You Free — Stone to Stars, One Honest Discovery at a Time! 10 Billion Percent!
+      </p>
 
       {/* TABS */}
       <div className="flex justify-center gap-2 mb-10 flex-wrap">
